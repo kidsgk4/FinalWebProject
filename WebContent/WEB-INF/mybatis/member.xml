@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	<select id="selectMemberByLid" parameterType="string" resultType="com.postoffice.web.dto.MemberDTO">
+		select mid, mname, mpassword from member where mid=#{lid}
+	</select>
+	
+	<insert id="insert" parameterType="com.postoffice.web.dto.MemberDTO">  
+		insert into member (mid, mname, mpassword, mtel, mphoto, mauthority, dept_id)
+		values (#{mid}, #{mname}, #{mpassword}, #{mtel}, #{mphoto, jdbcType=VARCHAR}, #{mauthority}, (select dept_id from dept where dept_id = #{dept_id}))
+		<!-- nullable인 컬럼이 있으면 jdbcType 지정해줘야 null값이 들어갈 수 있다. -->
+	</insert>
+	
+	<select id="selectDeptName" parameterType="string" resultType="string">
+		select dept_name
+		from member, dept
+		where 
+    		member.dept_id = dept.dept_id and
+    		member.mid = #{lid}
+	</select>
+	
+	<select id="selectMname" parameterType="string" resultType="string">
+		select mname
+		from 
+			member
+		where
+			mid=#{lid}
+		
+	</select>
+</mapper>

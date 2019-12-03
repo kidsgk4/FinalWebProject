@@ -1,0 +1,141 @@
+@charset "UTF-8";
+
+.wrapper{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.join_header{
+	margin: auto; /* 가운데 정렬 */
+	margin-top: 50px;
+}
+
+.join_body{
+	margin: auto;
+	margin-top: 10px;
+	padding: 0;
+}
+
+.join_body_tag{
+	display: inline-block;
+	border-bottom: 2px solid #F32C28;
+}
+
+.join_body ul{
+	list-style: none; /* 옆에 점 표시 제거 */
+	margin: 0;
+	padding: 0;
+}
+
+.join_body_tag li{
+	float: left; /* 리스트 가로 방향으로 정렬 */
+	width: 50%;
+}
+
+.join_body_tag button{
+	display: block; /* 블럭요소로 지정 */
+	padding: 5px 50px;
+	text-decoration: none; /* 태그 밑줄 제거 */
+	text-align: center; /* 텍스트 가운데 정렬 */
+	line-height: 40px; /* 블럭 높이 지정 */
+	background-color: white;
+	border-style: hidden;
+	border: 0;
+	outline: 0;
+}
+
+.join_body_tag button:hover{
+	background: #F32C28;
+	color: white;
+}
+
+.joinForm{
+	margin: 10px 0px;
+}
+
+.joinForm div{
+	margin: 10px 0px;
+}
+
+.joinForm input{
+	width: 100%;
+	line-height: 40px;
+}
+
+.joinForm input[type="file"]{
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	magin: -1px;
+	/* overflow: hidden; */
+	clip: rect(0,0,0,0);
+	border: 0;
+}
+
+.filebox label{
+	display: inline-block;
+    width: 30%;
+    color: white;
+    font-size: 17px;
+    line-height: 44px;
+    text-align: center;
+    background-color: #F32C28;
+    cursor: pointer;
+    border: 1px solid #F32C28;
+    border-color: #F32C28;
+    margin-bottom: 0;
+}
+
+.filebox .upload_name{
+	display: inline-block;
+	width: 70%;
+	float: left;
+	background-color: white;
+	border: 0.1px solid darkgray;
+	line-height: 43.9px;
+}
+
+.joinForm select{
+	width: 100%;
+	line-height: 40px;
+	padding: 0.7em 0.5em;
+}
+
+#lid{
+	float: left;
+	display: inline-block;
+	width: 70%;
+	line-height: 40px;
+}
+
+#overlap{
+	display: inline-block;
+	width: 30%;
+	line-height: 40px;
+	background-color: #F32C28;
+	border-style: solid;
+	border-color: #F32C28;
+	color: white;
+	font-size: 17px;
+}
+
+.joinButton{
+	line-height: 50px;
+	margin: 10px 0px;
+}
+
+.joinButton input{
+	line-height: 45px;
+	width: 100%;
+	background-color: #F32C28;
+	border-style: hidden;
+	color: white;
+	font-size: 25px;
+}
+
+
+
+

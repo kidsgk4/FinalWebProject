@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sysManage">
+	
+	
+	<select id="sysGetState" parameterType="com.postoffice.web.dto.StateDTO" resultType="com.postoffice.web.dto.StateDTO">
+		select * from state order by state_id asc
+	</select>
+	
+	<select id="sysGetDept" parameterType="com.postoffice.web.dto.DeptDTO" resultType="com.postoffice.web.dto.DeptDTO">
+		select * from dept order by dept_id asc
+	</select>
+	
+	<select id="sysGetVillage" parameterType="com.postoffice.web.dto.VillageDTO" resultType="com.postoffice.web.dto.VillageDTO">
+		select vid, vname from village order by vid asc
+	</select>
+	
+	<!-- stateId 중복 확인 -->
+	<select id="stateIdCheck" parameterType="String" resultType="int">
+		select count(state_id)
+		from
+			state
+		where
+			state_id =#{state_id}
+	</select> 
+	
+	<select id="deptIdCheck" parameterType="String" resultType="int">
+		select count(dept_id)
+		from 
+			dept
+		where
+			dept_id = #{dept_id}
+	</select>
+	
+	<select id="villageIdCheck" parameterType="String" resultType="int">
+		select count(vid)
+		from 
+			village
+		where
+			vid=#{vid}
+	</select>
+	
+	<!-- 추가 -->
+	<insert id="sysInsertState" parameterType="com.postoffice.web.dto.StateDTO">
+		insert into state(state_id, state_name) values(#{state_id}, #{state_name}) 
+	</insert>
+	
+	<insert id="sysInsertDept" parameterType="com.postoffice.web.dto.DeptDTO">
+		insert into dept(dept_id, dept_name) values(#{dept_id}, #{dept_name})
+	</insert>
+	
+	<insert id="sysInsertVillage" parameterType="com.postoffice.web.dto.VillageDTO">
+		insert into village(vid, vname) values(#{vid}, #{vname})
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="sysUpdateState" parameterType="com.postoffice.web.dto.StateDTO">
+		update 
+			state 
+		set 
+			state_id =#{state_id}, state_name=#{state_name} 
+		where 
+			state_id=#{state_id} 
+			
+
+	</update>
+	
+	<update id="sysUpdateDept" parameterType="com.postoffice.web.dto.DeptDTO">
+		update 
+			dept 
+		set 
+			dept_id =#{dept_id}, dept_name=#{dept_name} 
+		where 
+			dept_id=#{dept_id} 
+			
+	</update>
+	
+	<update id="sysUpdateVillage" parameterType="com.postoffice.web.dto.VillageDTO">
+		update 
+			village 
+		set 
+			vid =#{vid}, vname=#{vname} 
+		where 
+			vid=#{vid} 
+			
+	</update>
+	
+	
+	<!-- 삭제 -->
+	<delete id="sysStateDel" parameterType="com.postoffice.web.dto.StateDTO" >
+		delete from state where state_id = #{state_id}
+	</delete>
+	
+	<delete id="sysDeptDel" parameterType="com.postoffice.web.dto.StateDTO">
+		delete from dept where dept_id =#{dept_id}
+	</delete>
+	
+	<delete id="sysVillageDel" parameterType="com.postoffice.web.dto.StateDTO">
+		delete from village where vid=#{vid}
+	</delete>
+</mapper>

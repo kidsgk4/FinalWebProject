@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">
+	
+ <resultMap type="com.postoffice.web.dto.NoticeDTO" id="notice">
+		<id column="notice_id" property="notice_id"/>
+		<result column="notice_title" property="notice_title"/>
+		<result column="notice_content" property="notice_content"/>
+		<result column="notice_attach_file" property="notice_attach_file"/>
+		<result column="notice_date" property="notice_date"/>
+		<result column="mid" property="mid"/>
+		<collection  property="memberList" javaType="java.util.ArrayList" ofType="com.postoffice.web.dto.MemberDTO">
+			<id column="mid" property="mid"/>
+			<result column="mname" property="mname"/>
+		</collection>
+		<collection property="deptList" javaType="java.util.ArrayList" ofType="com.postoffice.web.dto.DeptDTO">
+			<id column="dept_id" property="dept_id"/>
+			<result column="dept_name" property="dept_name"/>
+		</collection>
+	</resultMap>
+	
+	
+	<!-- 공지사항 리스트 목록 가져오기 -->
+	<select id="noticeList" parameterType="map" resultMap="notice" >
+	select rn, notice_id, notice_title, notice_date, dept_id, mid, mname, dept_name
+		from(
+			select rownum as rn,  notice_id, notice_title, notice_date, dept_id, mid, mname,dept_name
+			from
+			(
+				select n.notice_id, n.notice_title, n.notice_date, m.dept_id, n.mid, m.mname, d.dept_name
+				from notice n, member m, dept d
+				where n.mid = m.mid
+				and m.dept_id = d.dept_id
+				order by notice_id desc
+			)
+			where rownum &lt;=#{endRowNum}
+		)
+		where rn &gt;=#{startRowNum}
+	</select>
+	
+	<!-- 공지사항 세부사항 확인(수정-테스트) -->
+	<select id="noticeDetail" parameterType="com.postoffice.web.dto.NoticeDTO" resultMap="notice">
+		select n.notice_id, n.notice_title, n.notice_content, n.notice_attach_file, n.notice_date,n.mid, m.mid, m.mname, d.dept_name, d.dept_id
+		from notice n, member m, dept d
+		where m.dept_id = d.dept_id
+		and n.mid = m.mid
+		and notice_id=#{notice_id}
+	</select>
+	
+	<!-- 공지사항 검색 -->
+	<select id="noticeTitleSearch" parameterType="map" resultMap="notice">
+		select rn, notice_id, notice_title, notice_date, dept_id, mid, mname, dept_name
+		from
+		(
+			select rownum as rn,  notice_id, notice_title, notice_date, dept_id, mid, mname,dept_name
+			from(
+				select n.notice_id, n.notice_title, n.notice_date, m.dept_id, n.mid, m.mname, d.dept_name
+				from notice n, member m, dept d
+				where n.mid = m.mid
+					and m.dept_id = d.dept_id
+					and notice_title like #{searchWord}
+					order by notice_id desc
+			)
+		where rownum &lt;=#{endRowNum}
+	)
+	where rn &gt;=#{startRowNum}
+	</select>
+	
+	<select id="mnameSearch" parameterType="map" resultMap="notice">
+	select rn, notice_id, notice_title, notice_date, dept_id, mid, mname, dept_name
+	from
+	(
+		select rownum as rn,  notice_id, notice_title, notice_date, dept_id, mid, mname,dept_name
+		from(
+			select n.notice_id, n.notice_title, n.notice_date, m.dept_id, n.mid, m.mname, d.dept_name
+			from notice n, member m, dept d
+			where n.mid = m.mid
+				and m.dept_id = d.dept_id
+				and m.mname like #{searchWord}
+				order by notice_id desc
+		)
+		where rownum &lt;=#{endRowNum}
+	)
+	where rn &gt;=#{startRowNum}
+	</select>
+	
+	<!-- 공지사항 상세 정보 보기 -->
+	<select id="selectnotice" parameterType="int" resultType="com.postoffice.web.dto.NoticeDTO">
+		select notice_id, notice_title, notice_content, notice_attach_file, notice_date, mid 
+		from notice 
+		where notice_id=#{notice_id}
+	</select>
+	
+	<select id="selectMember" parameterType="com.postoffice.web.dto.NoticeDTO" resultType="com.postoffice.web.dto.MemberDTO">
+		select	
+			*
+		from
+			member
+		where
+			mid=#{mid}
+	</select>
+	
+	<select id="selectDept" parameterType="com.postoffice.web.dto.MemberDTO" resultType="com.postoffice.web.dto.DeptDTO">
+		select
+			*
+		from
+			dept
+		where
+			dept_id=#{dept_id}
+	</select>
+	
+	<!-- 공지사항 리스트에 페이지 처리를 하기 위해 최종 열 갯수 가져오기 -->
+	<select id="selectTotalRowNum" resultType="int">
+		select count(*) from notice
+	</select>
+
+	<!-- 공지사항 검색시 페이징 처리 -->
+	<select id="SearchTitleTotalRowNum" resultType="int" parameterType="map">
+		select 
+			count(*) 
+		from 
+			notice 
+		where
+			notice_title like #{searchWord}
+	
+	</select>
+	<select id= "MnameSearchTotalRowNum" resultType="int" parameterType="map">
+		select 
+			count(*) 
+		from 
+			(select 
+				mname 
+			from 
+				member, notice 
+			where 
+				notice.mid = member.mid
+			) 
+		where mname like #{searchWord}
+	</select> 
+	
+	
+	
+	<!-- 공지사항 작성 후 저장하기 위한 insert -->
+	<insert id="noticeinsert" parameterType="com.postoffice.web.dto.NoticeDTO">
+		insert into notice(notice_id, notice_title, notice_content, notice_attach_file, notice_date, mid)
+		values(notice_num_seq.nextval,#{notice_title}, #{notice_content},#{notice_attach_file, jdbcType=VARCHAR},sysdate,#{mid})
+	</insert>
+	
+	
+	
+	<!-- 공지사항 세부정보 열람 후 수정할 때 -->
+	<update id="noticeupdate" parameterType="com.postoffice.web.dto.NoticeDTO">
+		update 
+			notice 
+		set 
+			notice_title=#{notice_title}, notice_content=#{notice_content}, notice_attach_file=#{notice_attach_file, jdbcType=VARCHAR}, notice_date=sysdate
+		where notice_id=#{notice_id}
+	</update>
+
+	<!-- 공지사항 삭제 -->
+	<delete id="noticedelete" parameterType="com.postoffice.web.dto.NoticeDTO">
+		delete from notice where notice_id=#{notice_id}
+	</delete>
+	
+	<!-- 테스트 코드 -->
+	<select id="testMember" resultType="com.postoffice.web.dto.MemberDTO">
+		SELECT
+			*
+		FROM
+			member
+	</select>
+	
+	<select id="testNotice" resultMap="notice">
+		select n.notice_id, n.notice_title, n.notice_date, m.dept_id, n.mid, m.mname, d.dept_name
+		from notice n, member m, dept d
+		where n.mid = m.mid
+		and m.dept_id = d.dept_id
+		order by notice_id desc
+	</select>
+	
+	<select id="memberInfo" parameterType="com.postoffice.web.dto.MemberDTO" resultType="com.postoffice.web.dto.MemberDTO">
+		select
+			*
+		from
+			member
+		where
+			mid = #{mid}
+	</select>
+	<select id="getNoticeListdiv" resultMap="notice">
+		select n.notice_id, n.notice_title, n.notice_date, m.dept_id, n.mid, m.mname, d.dept_name
+				from notice n, member m, dept d
+				where n.mid = m.mid
+				and m.dept_id = d.dept_id
+				order by notice_id desc
+	</select>
+</mapper>

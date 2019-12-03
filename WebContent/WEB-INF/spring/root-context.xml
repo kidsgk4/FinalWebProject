@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id = "dataSource" class = "org.apache.commons.dbcp2.BasicDataSource" destroy-method = "close">
+		<property name="driverClassName" value = "oracle.jdbc.OracleDriver"></property>
+		<property name="url" value = "jdbc:oracle:thin:@106.253.56.122:1521:orcl"></property>
+		<property name="username" value = "team3"></property>
+		<property name="password" value = "iot12345"></property>
+		<property name="initialSize" value = "1"></property>
+		<property name="maxTotal" value = "5"></property>
+		<property name="maxIdle" value = "1"></property>
+	</bean>
+	
+	<bean id = "sqlSessionFactory" class = "org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref = "dataSource"></property>
+		<property name="mapperLocations" value = "/WEB-INF/mybatis/*.xml"></property>
+	</bean>
+	
+	<bean id = "sqlSessionTemplate" class = "org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref = "sqlSessionFactory"></constructor-arg>
+	</bean>
+
+</beans>

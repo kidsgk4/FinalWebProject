@@ -1,0 +1,135 @@
+@charset "UTF-8";
+/* header start */
+h5{
+	margin: 0;
+	font-size: 16px;
+}
+
+a{
+	text-decoration: none;
+	font-weight: 600;
+    color: black;
+}
+.more {
+	font-size: 11px;
+    float: right;
+    line-height: 3;
+}
+.header{
+	width : 100%;
+	height : 135px;
+	text-align: center;
+}
+.logo{
+	width : 100%;
+	height : 70%;
+}
+.menubar{
+border:none;
+border:0px;
+margin:0px;
+padding:0px;
+padding-left:3%;
+font: 67.5% "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
+font-size:14px;
+font-weight:bold;
+}
+
+.menubar ul{
+background: white;
+height:36px;
+list-style:none;
+padding:0;
+margin-bottom:5px;
+}
+
+.menubar li{
+float:left;
+padding:0px;
+}
+
+.menubar li a{
+background: white;
+color:black;
+display:block;
+font-weight:600px;
+line-height: 37.5px;
+margin:0px;
+margin-right: 87px;
+padding:0px 25px;
+text-align:center;
+text-decoration:none;
+}
+
+.menubar li a:hover, .menubar ul li:hover a{
+background: #F32C28;
+color:white;
+text-decoration:none;
+}
+
+.menubar li ul{
+background: #F32C28;
+opacity: 0.5;
+display:none; /* 평상시에는 드랍메뉴가 안보이게 하기 */
+height:auto;
+padding:0px;
+margin:0px;
+border:0px;
+position:absolute;
+width:200px;
+z-index:200;
+/*top:1em;
+/*left:0;*/
+}
+
+.menubar li:hover ul{
+display:block; /* 마우스 커서 올리면 드랍메뉴 보이게 하기 */
+}
+
+.menubar li li {
+background: #F32C28;;
+display:block;
+float:none;
+margin:0px;
+padding:0px;
+width:200px;
+}
+
+.menubar li:hover li a{
+background:none;
+}
+
+.menubar li ul a{
+display:block;
+height:50px;
+font-size:12px;
+font-style:normal;
+margin:0px;
+padding:0px 10px 0px 15px;
+text-align:left;
+}
+
+.menubar li ul a:hover, .menubar li ul li:hover a{
+background: #F71C1C;
+border:0px;
+color:#ffffff;
+text-decoration:none;
+}
+
+.menubar p{
+clear:left;
+}  
+ 
+/* header end */
+/* body common*/
+.body{
+	width : 100%;
+	height : 800px;
+	margin-bottom : 10px;
+	padding-top:20px;
+	border-top: 2px solid #F32C28;
+}
+.body_sub{
+	width : 90%;
+	margin : 0 auto;
+}

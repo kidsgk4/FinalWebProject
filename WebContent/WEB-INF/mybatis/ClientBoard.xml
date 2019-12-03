@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClientBoard">
+
+<resultMap type="com.postoffice.web.dto.MailDTO" id="Mail" >
+<result column="mail_id" property="mail_id"/>
+	<result column="from_name" property="from_name"/>
+	<result column="from_address" property="from_address"/>
+	<result column="to_name" property="to_name"/>
+	<result column="to_address" property="to_address"/>
+	<result column="mail_weight" property="mail_weight"/>
+	<result column="package_Num" property="package_num"/> 
+	<result column="mail_date" property="mail_date"/>
+<collection property="stateList" javaType="java.util.List" ofType="com.postoffice.web.dto.StateDTO">
+	<id column="state_id" property="state_id"/>
+	<result column="state_name" property="state_name"/>
+</collection>
+<collection property="villageList" javaType="java.util.List" ofType="com.postoffice.web.dto.VillageDTO">
+	<id column="vid" property="vid"/>
+	<result column="vname" property="vname"/>
+</collection>
+</resultMap>
+
+	<select id="selectTotalRowNum" resultType="int" parameterType="string">
+		select count(*) from mail where vid = #{sessionvid} and state_id='s005'
+		
+	</select>
+	<!-- 마을 이름 join해서 받아와야함 -->
+	
+	<select id="selectMailList" parameterType="map" resultMap="Mail">
+	select rn,mail_id,from_name,from_address,to_name,to_address,mail_weight,state_name,mail_date,vname
+		from(
+		    select rownum as rn, mail_id,from_name,from_address,to_name,to_address,mail_weight,state_name,mail_date,vname
+		    from(
+		        select mail_id,from_name,from_address,to_name,to_address,mail_weight,state_name,mail_date,vname
+		        from mail, village ,state
+		        where mail.vid = village.vid 
+		        and mail.state_id = state.state_id
+		        and mail.vid = #{vid}
+		        and mail.state_id = 's005'
+		    )
+		    where rownum &lt;= #{endRowNo}
+		)
+		where rn &gt; = #{startRowNo}
+	</select>
+	
+	<select id="selectnum" resultType="int">
+		select count(*) from Mail 
+	</select>
+	
+	<select id="selectTotalRowNum2" parameterType="string" resultType="int">
+		select
+			count(*)
+		from
+			mail
+		where
+			from_name 
+		like 
+			#{searchType}
+	</select>
+	
+	<select id="selectvname" resultType="string">
+		select vname from vmember
+	</select>
+
+	<insert id="insertBoard">
+		insert into Mail(mail_id,from_name,from_address,to_name,to_address,mail_weight,state_name,mail_date,vname)
+			select (#{from_name},#{from_address},#{to_name},#{to_address},#{mail_weight},'#{state_name}','#{vname}')
+			from mail,village,state
+			where mail.vid = village.vid and mail.state_id = state.state_id
+	</insert>
+	 
+	<delete id="removeRequest">
+		delete Mail where mail_id = #{mail_id}
+	</delete>
+	
+ 	<select id="selectOne" parameterType="int" resultMap="Mail">
+ 	select 
+			mail_id,from_name,from_address,to_name,to_address,mail_weight,state_name,mail_date,vname 
+		from 
+			mail ,village ,state
+		
+		where mail_id=#{mail_id} 
+		and mail.vid=village.vid 
+		and mail.state_id=state.state_id
+	</select>
+
+	<update id="updateOne" parameterType="com.postoffice.web.dto.MailDTO">
+		update mail set mail_id=#{mail_id}
+		,from_name=#{from_name}
+		,from_address=#{from_address}
+		,to_name=#{to_name}
+		,to_address=#{to_address}
+		,mail_weight=#{mail_weight}
+		where mail_id = #{mail_id}
+	</update>
+	
+	<select id="selectsearch" parameterType="map" resultMap="Mail">		
+		select rn,mail_id,from_name,from_address,to_name,to_address,mail_weight,state_id,state_name,mail_date,vname	
+		from(
+		    select rownum as rn, mail_id,from_name,from_address,to_name,to_address,mail_weight,state_id,state_name,mail_date,vname
+		    from(
+		        SELECT
+					mail_id, from_name, from_address,to_name,to_address,mail_weight,state_id,state_name,mail_date,vname
+				FROM(
+					select mail_id, from_name, from_address,to_name,to_address,mail_weight,state.state_id,state_name,mail_date,vname
+					from mail mail, village, state state
+					where mail.vid = village.vid
+					and mail.state_id = state.state_id
+		        	and mail.vid = #{vid}
+		        	and mail.state_id = 's005'
+				)	
+				WHERE
+					from_name
+				LIKE
+					#{keyword}
+		    )
+		    where rownum &lt;= #{endRowNo} 
+		)
+		where rn &gt; = #{startRowNo}
+	</select>
+	
+	<select id="toselectsearch" parameterType="map" resultMap="Mail">		
+		select rn,mail_id,from_name,from_address,to_name,to_address,mail_weight,state_id,state_name,mail_date,vname	
+		from(
+		    select rownum as rn, mail_id,from_name,from_address,to_name,to_address,mail_weight,state_id,state_name,mail_date,vname
+		    from(
+		        SELECT
+					mail_id, from_name, from_address,to_name,to_address,mail_weight,state_id,state_name,mail_date,vname
+				FROM(
+					select mail_id, from_name, from_address,to_name,to_address,mail_weight,state.state_id,state_name,mail_date,vname
+					from mail mail, village, state state
+					where mail.vid = village.vid
+					and mail.state_id = state.state_id
+		        	and mail.vid = #{vid}
+		        	and mail.state_id = 's005'
+				)	
+				WHERE
+					to_name
+				LIKE
+					#{keyword}
+		    )
+		    where rownum &lt;= #{endRowNo} 
+		)
+		where rn &gt; = #{startRowNo}
+	</select>
+	
+	<insert id="answerdto" parameterType="com.postoffice.web.dto.MailDTO">
+		insert into mail(mail_id,from_name,from_address,to_name,to_address,mail_weight,state_id,mail_date,vid)
+			values(seq_mail.nextval,#{from_name},#{from_address},#{to_name},#{to_address},#{mail_weight},'s005',sysdate, #{vid})
+	</insert>
+		
+	<insert id="insertMailPackaging" parameterType="com.postoffice.web.dto.PackageDTO">
+		<selectKey keyProperty="package_id" resultType="int" order="AFTER">
+			select seq_package.currval from dual
+		</selectKey>
+		insert into
+			package(package_id, package_weight, state_id,arrival_date, vid)					
+		values (seq_package.nextval, #{package_weight},'s001',sysdate,#{vid})
+	</insert>
+	
+	<update id="updateMail" parameterType="map">
+		update
+			mail
+		set
+			package_num=#{package_num},
+			state_id = 's006'
+		where
+			mail_id=#{mail_id}
+	</update>
+</mapper>

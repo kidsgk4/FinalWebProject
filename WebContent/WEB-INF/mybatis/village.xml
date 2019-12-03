@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="village">
+	<update id="updateSendPath" parameterType="com.postoffice.web.dto.VillageDTO">
+		update village set send_path = #{send_path} where vid=#{vid} 
+	</update>
+	
+	<update id="updateReturnPath" parameterType="com.postoffice.web.dto.VillageDTO">
+		update village set return_path = #{return_path} where vid=#{vid}
+	</update>
+	
+	<select id="selectSendPath" parameterType="string" resultType="string">
+		SELECT
+			send_path
+		FROM
+			village
+		WHERE
+			vid = #{vid}
+	</select>
+</mapper>

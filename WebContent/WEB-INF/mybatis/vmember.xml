@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vmember">
+	<resultMap type="com.postoffice.web.dto.VMemberDTO" id="vmemberInfo">
+		<id column="vmid" property="vmid"/>
+		<result column="vmname" property="vmname"/>
+		<result column="vmpassword" property="vmpassword"/>
+		<result column="grade" property="grade"/>
+		<collection property="villageList" javaType="java.util.List" ofType="com.postoffice.web.dto.VillageDTO">
+			<id column="vid" property="vid"/>
+			<result column="vname" property="vname"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectVmemberByLpw" parameterType="string" resultType="com.postoffice.web.dto.VMemberDTO">
+		select
+			vmpassword
+		from
+			vmember
+		where
+			vmid=#{lid}
+	</select>
+	
+	
+	<select id="selectUserInfo" parameterType="string" resultMap="vmemberInfo">
+		select 
+			vmember.vmid, vmember.vmname, vmember.vmpassword, vmember.vmname, village.vid, village.vname 
+		from 
+			vmember, village 
+		where 
+			vmember.vid = village.vid
+		and
+			vmid=#{lid}
+	</select>
+	
+	<insert id="insert" parameterType="com.postoffice.web.dto.VMemberDTO">
+		insert into vmember (vmid, vmname, vmpassword, vmtel, vmphoto, vid)
+		values (#{vmid}, #{vmname}, #{vmpassword}, #{vmtel}, #{vmphoto, jdbcType=VARCHAR}, (select vid from village where vid = #{vid}))
+		<!-- nullable인 컬럼이 있으면 jdbcType 지정해줘야 null값이 들어갈 수 있다. -->	
+	</insert>
+	
+	<select id="selectVname" parameterType="string" resultType="string">
+		select vname
+		from vmember, village
+		where
+   			vmember.vid = village.vid and
+    		vmember.vmid = #{lid}
+	</select>
+	
+	<select id="selectvmname" parameterType="string" resultType="string">
+		select 
+			vmname
+		from 
+			vmember
+		where vmid = #{lid}
+	</select>
+	
+	<select id="selectvlid" parameterType="string" resultType="string">
+		select
+			vmid
+		from
+			vmember
+		where 
+			vmid = #{lid}
+	</select>
+	
+	<select id="selectvmemeberList" parameterType="string" resultType="com.postoffice.web.dto.VMemberDTO">
+		select
+			*
+		from
+			vmember
+		where vmember.vmid = #{lid}
+	</select>
+	
+	<!-- 개인정보 수정 -->
+	<update id="updateList" parameterType="com.postoffice.web.dto.VMemberDTO">
+		update 
+		    vmember 
+		set 
+		    vmid=#{vmid},vmname=#{vmname},vmpassword=#{vmpassword},vmtel=#{vmtel},vmphoto=#{vmphoto},vid=#{vid}
+		where 
+		    vmid=#{vmid}
+	</update>
+	
+	<update id="updateFile" parameterType="map">
+		update
+			vmember
+		set
+			vmphoto=#{vmphoto}
+		where
+			vmid=#{vmid}
+	</update>
+	
+	<select id="selectvphoto" parameterType="string" resultType="string">
+		select
+			vmphoto
+		from
+			vmember
+		where
+			vmember.vmid=#{lid}
+	</select>
+	
+	<!-- 회원가입 할때 마을 리스트 -->
+	<select id="selectvlist" resultType="com.postoffice.web.dto.VillageDTO">
+		select 
+			vname,vid
+		from 
+			village
+	</select>
+	
+	<!-- 회원가입할때 부서리스트 -->
+	<select id="selectdlist" resultType="com.postoffice.web.dto.DeptDTO">
+		select
+			dept_name,dept_id
+		from
+			dept
+	</select>
+</mapper>

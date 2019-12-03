@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="drone">
+ <resultMap type="com.postoffice.web.dto.DroneDTO" id="droneInfo">
+		<id column="drone_id" property="drone_id"/>
+		<result column="add_date" property="add_date"/>
+		<result column="state_id" property="state_id"/>
+		<collection property="stateList" javaType="java.util.List" ofType="com.postoffice.web.dto.StateDTO">
+			<result column="state_name" property="state_name"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap type="com.postoffice.web.dto.DeliveryDTO" id="droneLog">
+		<result column="delivery_date" property="delivery_date"/>
+		<collection property="packageList" javaType="java.util.List" ofType="com.postoffice.web.dto.PackageDTO">
+			<id column="package_id" property="package_id"/>
+			<result column="package_weight" property="package_weight"/>
+		</collection>
+		<collection property="villageList" javaType="java.util.List" ofType="com.postoffice.web.dto.VillageDTO">
+			<id column="vid" property="vid"/>
+			<result column="vname" property="vname"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap type="com.postoffice.web.dto.PackageDTO" id="packageInfo">
+      <id column="package_id" property="package_id"/>
+      <result column="package_weight" property="package_weight"/>
+      <result column="arrival_date" property="arrival_date"/>
+      <result column="state_id" property="state_id"/>
+      <collection property="stateList" javaType="java.util.List" ofType="com.postoffice.web.dto.StateDTO">
+         <result column="state_name" property="state_name"/>
+      </collection>
+      <collection property="villageList" javaType="java.util.List" ofType="com.postoffice.web.dto.VillageDTO">
+         <id column="vid" property="vid"/>
+         <result column="vname" property="vname"/>
+         <result column="send_path" property="send_path"/>
+         <result column="return_path" property="return_path"/>
+      </collection>
+   </resultMap>
+   
+	
+	<select id="selectDroneList" resultMap="droneInfo">
+		SELECT
+			drone.*, state.state_name
+		FROM
+			drone, state
+		WHERE
+			drone.state_id = state.state_id
+		ORDER BY
+			drone_id
+	</select>
+	
+	<select id="selectPackageList" resultMap="packageInfo">
+		SELECT
+		   package.package_id, package.package_weight, package.arrival_date, package.state_id, state.state_name, village.*
+		FROM
+		   package, state, village
+		WHERE
+		   package.state_id = state.state_id
+		AND
+		   package.vid = village.vid
+		ORDER BY
+		   package_id asc
+   </select>
+	
+	<select id="selectDroneInfo" parameterType="com.postoffice.web.dto.DroneDTO" resultMap="droneInfo">
+		SELECT
+			drone.*, state.state_name
+		FROM
+			drone, state
+		WHERE
+			drone.state_id = state.state_id
+		AND
+			drone_id = #{drone_id}
+	</select>
+	
+	<select id="selectDroneLog" parameterType="com.postoffice.web.dto.DroneDTO" resultMap="droneLog">
+		SELECT
+			delivery.delivery_date, package.package_id, package.package_weight, village.vid, village.vname
+		FROM
+			delivery, package ,village
+		WHERE
+			delivery.package_id = package.package_id
+		AND
+			package.vid = village.vid
+		AND
+			drone_id = #{drone_id}
+	</select>
+	
+	<select id="selectDroneDeliveryState" parameterType="com.postoffice.web.dto.DroneDTO" resultType="com.postoffice.web.dto.VillageDTO">
+		<choose>
+			<when test="state_id.equals('sd002')">
+				SELECT
+					village.send_path
+				FROM
+					delivery, package, village, drone
+				WHERE
+					delivery.package_id = package.package_id
+				AND
+		            delivery.drone_id = drone.drone_id
+		        AND
+					package.vid = village.vid
+				AND
+					delivery.drone_id = #{drone_id}
+				AND
+					delivery.state_id = 's003'
+				AND
+					drone.state_id = 'sd002'
+			</when>
+			<otherwise> 
+				SELECT
+					village.return_path
+				FROM
+					delivery, package, village, drone
+				WHERE
+					delivery.package_id = package.package_id
+				AND
+		            delivery.drone_id = drone.drone_id
+		        AND
+					package.vid = village.vid
+				AND
+					delivery.drone_id = #{drone_id}
+				AND
+					delivery.state_id = 's007'
+				AND
+					drone.state_id = 'sd005'
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insertDroneDelivery" parameterType="com.postoffice.web.dto.DeliveryDTO">
+		INSERT INTO
+			delivery(package_id, drone_id, delivery_date,state_id)
+		VALUES
+			(#{package_id},#{drone_id},SYSDATE,'s003')
+	</insert>
+	
+	<update id="updateDroneDelivery" parameterType="com.postoffice.web.dto.DeliveryDTO">
+		UPDATE
+			delivery
+		SET
+			state_id = 's007'
+		WHERE
+			package_id = #{package_id}
+	</update>
+	
+	<update id="updateDroneDeliveryClear" parameterType="com.postoffice.web.dto.DeliveryDTO">
+		UPDATE
+			delivery
+		SET
+			state_id = 's004'
+		WHERE
+			package_id = #{package_id}
+	</update>
+	
+	<update id="updateDroneStateDelivery" parameterType="map">
+		<choose>
+			<when test="state_id.equals('sd001')">
+				UPDATE
+					drone
+				SET
+					state_id = 'sd002'
+				WHERE
+					drone_id = #{drone_id}
+			</when>
+			<when test="state_id.equals('s007')">
+				UPDATE
+					drone
+				SET
+					state_id = 'sd005'
+				WHERE
+					drone_id = #{drone_id}
+			</when>
+		</choose>
+	</update>
+	
+	<update id="updatePackageState" parameterType="map">
+
+		UPDATE
+			package
+		SET
+			state_id = 's003',
+			send_date = SYSDATE
+		WHERE
+			package_id = #{package_id}
+	</update>
+	<update id="updatePackageClearState" parameterType="com.postoffice.web.dto.DeliveryDTO">
+		UPDATE
+			package
+		SET
+			state_id = 's004',
+			arrival_date = SYSDATE
+		WHERE
+			package_id = #{package_id}
+	</update>
+	<update id="updateDeliveryClear" parameterType="com.postoffice.web.dto.DeliveryDTO">
+		UPDATE
+			drone
+		SET
+			state_id = 'sd001'
+		WHERE
+			drone_id = #{drone_id}
+	</update>
+	<select id="selectDeliveryDrone" resultType="com.postoffice.web.dto.DeliveryDTO">
+		SELECT
+			drone_id, package_id, state_id
+		FROM
+			delivery
+	</select>
+	
+</mapper>
