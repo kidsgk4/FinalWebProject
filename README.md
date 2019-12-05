@@ -1,6 +1,6 @@
 # PostOfficeDroneService
 
-<h2>PPT 동영상 첨부 하였습니다.</h2>
+<h2>PPT 동영상 첨부 하였습니다. https://blog.naver.com/kidsgk4/221727671028</h2>
 
 
 <img src="https://postfiles.pstatic.net/MjAxOTEyMDVfMzAg/MDAxNTc1NTA4NDE3NDI0.f7sI4iQ8DD1BG9siWnh0T7EJHvttisUaL8oGuneo704g.XoAyn-Bcj9HFEFaYcgg0CuPRLvxVKXmsRczPd-rgUEcg.PNG.kidsgk4/a.png?type=w580"
